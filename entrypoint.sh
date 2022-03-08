@@ -36,7 +36,13 @@ EXIT_CODE=$3
 
 # Read TF_WORKSPACE environment variable or use "default"
 WORKSPACE=${TF_WORKSPACE:-default}
+echo " $WORKSPACE $WORKTFDIR "
 WORKTFDIR=${WORKTFDIR}
+
+echo " AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AUQI"
+echo " $GITHUB_EVENT_PATH" "
+echo " AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AQUI AUQI"
+echo " $WORKSPACE $WORKTFDIR "
 
 # Read EXPAND_SUMMARY_DETAILS environment variable or use "true"
 if [[ ${EXPAND_SUMMARY_DETAILS:-true} == "true" ]]; then
