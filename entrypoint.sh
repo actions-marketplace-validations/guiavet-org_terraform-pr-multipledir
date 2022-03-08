@@ -36,6 +36,7 @@ EXIT_CODE=$3
 
 # Read TF_WORKSPACE environment variable or use "default"
 WORKSPACE=${TF_WORKSPACE:-default}
+WORKTFDIR=${WORKTFDIR}
 
 # Read EXPAND_SUMMARY_DETAILS environment variable or use "true"
 if [[ ${EXPAND_SUMMARY_DETAILS:-true} == "true" ]]; then
@@ -190,7 +191,7 @@ if [[ $COMMAND == 'plan' ]]; then
     if [[ $COLOURISE == 'true' ]]; then
       CLEAN_PLAN=$(echo "$CLEAN_PLAN" | sed -r 's/^~/!/g') # Replace ~ with ! to colourise the diff in GitHub comments
     fi
-    PR_COMMENT="### Terraform \`plan\` Succeeded for Workspace: \`$WORKSPACE\`
+    PR_COMMENT="### Terraform \`plan\` Succeeded for Workspace: \`$WORKSPACE\` TF Dir: \`$WORKTFDIR\`
 <details$DETAILS_STATE><summary>Show Output</summary>
 
 \`\`\`diff
@@ -203,7 +204,7 @@ $CLEAN_PLAN
   # Meaning: Terraform plan failed.
   # Actions: Build PR comment.
   if [[ $EXIT_CODE -eq 1 ]]; then
-    PR_COMMENT="### Terraform \`plan\` Failed for Workspace: \`$WORKSPACE\`
+    PR_COMMENT="### Terraform \`plan\` Failed for Workspace: \`$WORKSPACE\` TF Dir: \`$WORKTFDIR\`
 <details$DETAILS_STATE><summary>Show Output</summary>
 
 \`\`\`
