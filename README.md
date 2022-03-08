@@ -1,3 +1,6 @@
+# FORK
+This is a fork supporting multiple terraform directories.
+
 # Terraform PR Commenter
 
 Adds opinionated comments to PR's based on Terraform `fmt`, `init`, `plan` and `validate` outputs.
@@ -37,6 +40,7 @@ This action can only be run after a Terraform `fmt`, `init`, `plan` or `validate
 
 | Name                     | Requirement | Description                                                                                                                                               |
 | ------------------------ | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `WORKTFDIR`              | _required_  | Removing old comments takes into account the path set by this env |
 | `GITHUB_TOKEN`           | _required_  | Used to execute API calls. The `${{ secrets.GITHUB_TOKEN }}` already has permissions, but if you're using your own token, ensure it has the `repo` scope. |
 | `TF_WORKSPACE`           | _optional_  | Default: `default`. This is used to separate multiple comments on a pull request in a matrix run.                                                         |
 | `EXPAND_SUMMARY_DETAILS` | _optional_  | Default: `true`. This controls whether the comment output is collapsed or not.                                                                            |
@@ -49,8 +53,17 @@ jobs:
   terraform:
     name: 'Terraform'
     runs-on: ubuntu-latest
+  strategy:
+    matrix:
+      tf_dirs: [ecr, rds, s3, sgr, vpc]
     env:
-      EXPAND_SUMMARY_DETAILS: 'false' # All steps will have this environment variable
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      TF_IN_AUTOMATION: true
+      TF_WORKSPACE: development #TF separation done based on a path with the same name
+    defaults:
+      run:
+        working-directory: terraform/${{ env.TF_WORKSPACE }}/${{ matrix['tf_dirs'] }} #Here the tf location is done using the workspace, which is also a dir that separates the files in the iac repo with the matrix that defines the active repos
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -58,6 +71,7 @@ jobs:
       - name: Post Plan
         uses: robburger/terraform-pr-commenter@v1
         env:
+          WORKTFDIR:  ${{ matrix['tf_dirs'] }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           EXPAND_SUMMARY_DETAILS: 'true' # Override global environment variable; expand details just for this step
         with:
