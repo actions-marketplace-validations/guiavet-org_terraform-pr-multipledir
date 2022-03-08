@@ -18,6 +18,7 @@ This action can only be run after a Terraform `fmt`, `init`, `plan` or `validate
 - uses: robburger/terraform-pr-commenter@v1
   env:
     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    WORKTFDIR: ${{ matrix['tf_dirs'] }}
   with:
     commenter_type: fmt/init/plan/validate # Choose one
     commenter_input: ${{ format('{0}{1}', steps.step_id.outputs.stdout, steps.step_id.outputs.stderr) }}
